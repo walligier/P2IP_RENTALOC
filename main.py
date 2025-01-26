@@ -1,18 +1,18 @@
-#%%Import
-
-import numpy as np
+# %% IMPORT
 import pandas as pd
 from datetime import datetime
 
-#%% Creation des DataFrame de Données
+# %% Matching
 
-DataClient = pd.DataFrame(columns = ["IDClient", "Emplacement", "Loyermax", "Surfacemin", "Colocation","DateEntré","DateFin", "DPEmin" ])
+DataClient = pd.DataFrame(
+    columns=["IDClient", "Emplacement", "Loyermax", "Surfacemin", "Colocation", "DateEntré", "DateFin", "DPEmin"])
 
-DataLogement = pd.DataFrame(columns=["IDLogement","Emplacement", "Loyer", "Surface", "Colocation","DateDebut", "DateFin", "DPE" ])
+DataLogement = pd.DataFrame(
+    columns=["IDLogement", "Emplacement", "Loyer", "Surface", "Colocation", "DateDebut", "DateFin", "DPE"])
 
-DataAgence = pd.DataFrame(columns = ["IDAgence","Emplacement"])
 
-#%% Matching des données
+# DataClient.loc[0] = [1, "Ternes", 800, 14, False, datetime(datetime.today().year,1,26), datetime(datetime.today().year, 1, 28), "C"]
+# DataLogement.loc[0] = [1103, "Ternes", 650, 15, False, datetime.now(), datetime(datetime.today().year, 1, 30), "B"]
 
 def MatchingClient(client):
     """Algorythme qui a partir des criteres d'un client cherchant un logement renvoie tous les logement
@@ -34,12 +34,25 @@ def MatchingClient(client):
 
     return Logement_valide
 
-#%%TEST
-#Ajout d'un client et d'un logement
-DataClient.loc[0] = [1, "Ternes", 800, 14, False, datetime(datetime.today().year,1,26), datetime(datetime.today().year, 1, 28), "C"]
-DataLogement.loc[0] = [1103, "Ternes", 650, 15, False, datetime.now(), datetime(datetime.today().year, 1, 30), "B"]
 
-#Test pour chaque client si un des logements correspond aux criteres
+# %% DataLogement
+
+resultats = DataClient.apply(MatchingClient, axis=1)
+
+# Recuperation de la base de donnée
+
+DataLogement = pd.read_csv(r"C:\Users\hypol\OneDrive\Documents\ESILV\P2IP\BaseDonnéesLogement.csv", delimiter=";")
+
+# Mise au format datetime des dates dans le CSV
+
+DataLogement["DateDebut"] = pd.to_datetime(DataLogement["DateDebut"], format="%d/%m/%Y")
+DataLogement["DateFin"] = pd.to_datetime(DataLogement["DateFin"], format="%d/%m/%Y")
+
+# ajout d'un client fictif
+DataClient.loc[0] = [1, "17eme", 800, 14, False, datetime(datetime.today().year, 1, 26),
+                     datetime(datetime.today().year, 1, 28), "C"]
+
+# %% TEST
 
 resultats = DataClient.apply(MatchingClient, axis=1)
 print(resultats)
